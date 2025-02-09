@@ -1,0 +1,68 @@
+ARG FROM_IMAGE=debian:bookworm-slim
+ARG FROM_IMAGE_RUNTIME=build
+ARG FROM_IMAGE_DEV=build
+
+FROM $FROM_IMAGE AS build
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+LABEL maintainer="Dominik Falkner <dominik.falkner@risc-software.at>"
+
+# Here you can add any system dependencies you might need
+RUN apt-get update && apt-get install -yq \
+    # Install dependencies for Python and uv
+    curl \
+    ca-certificates \
+    libgdal-dev \
+    # cleanup
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Install Python using uv with version from pyproject.toml
+RUN uv venv
+
+# Setup directory structure
+# https://github.com/GoogleContainerTools/kaniko/issues/1508
+# seems like remnant of an earlier kaniko implementation
+# delete, to circumvent any side-effects
+# can be removed after issue above is fixed
+RUN rm -rf /workspace
+
+WORKDIR /workspace
+
+# Install dependencies (package itself is not installed)
+COPY pyproject.toml *.lock ./
+
+# Install dependencies with uv
+RUN uv sync
+
+###############################################################################
+# TODO: build from FROM_IMAGE (or a plain minimal img), and just copy from build
+FROM $FROM_IMAGE_RUNTIME AS runtime
+
+# Copy the rest of the repository
+COPY . .
+
+CMD ["bash"]
+
+###############################################################################
+FROM $FROM_IMAGE_DEV AS dev
+
+# Point python path to workspace
+ENV PYTHONPATH="${PYTHONPATH}:/workspace"
+
+# Install dev dependencies with uv
+RUN uv sync --all-extras
+
+# Install dev tools conditionally
+RUN apt-get update --allow-releaseinfo-change && apt-get install -yq \
+    coreutils \
+    neovim \
+    curl \
+    git \
+    iputils-ping \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN uvx cruft

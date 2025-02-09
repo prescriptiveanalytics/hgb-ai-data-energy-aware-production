@@ -1,0 +1,94 @@
+default:
+  tags: [ "openshift-cache" ]
+
+# includes from the global ci-templates repository
+include:
+  - project: 'common/ci-templates'
+    ref: main
+    file: '/devops/python/test-pipeline.yml'
+  - project: 'common/ci-templates'
+    ref: main
+    file: '/devops/container/build.yml'
+
+# optional - override the default values, if specified
+variables:
+  REGISTRY_BASE_URL: ${CI_REGISTRY_IMAGE}/hgb_ai_data_energy_aware_production
+  # specify python working directory (e.g. for mixed repositories)
+  PYTHON_WORKING_DIRECTORY: "."
+  # define a specific python version. Will be replaced in a future version by configuring pyenv in pyproject.toml
+  PYTHON_VERSION: '3.11'
+  # defined image for python testing - should be able to run all python stuff
+  PYTHON_IMAGE: ${REGISTRY_BASE_URL}/dev
+
+stages:
+  - provision
+  - sast
+  - test
+  - build
+  - publish
+
+build-image:
+  stage: provision
+  needs: []
+  rules:
+    - changes:
+      - $PYTHON_WORKING_DIRECTORY/poetry.lock
+      - $PYTHON_WORKING_DIRECTORY/Dockerfile
+      - $PYTHON_WORKING_DIRECTORY/.dockerignore
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'   # Run on the default branch
+      variables:
+        PREFIX: ${CI_DEFAULT_BRANCH}_
+    - if: '$CI_COMMIT_BRANCH == "dev"'                # Run on the dev branch
+    - when: manual
+  allow_failure: true
+  extends:
+    - .kaniko-build-image
+  variables:
+    IMAGE_NAME: ${REGISTRY_BASE_URL}/build
+    IMAGE_TAG: ${PREFIX}${CI_PIPELINE_IID}_${CI_COMMIT_SHORT_SHA}
+    DOCKERFILE: Dockerfile
+    WORKING_DIRECTORY: ${CI_PROJECT_DIR}/${PYTHON_WORKING_DIRECTORY}
+    KANIKO_ARGS: --reproducible --skip-unused-stages=true --target=build --destination ${IMAGE_NAME}:${PREFIX}latest
+
+build-runtime-image:
+  stage: build
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'   # Run on the default branch
+      variables:
+        PREFIX: ${CI_DEFAULT_BRANCH}_
+    - if: '$CI_COMMIT_BRANCH == "dev"'                # Run on the dev branch
+    - when: manual
+  allow_failure: true
+  extends:
+    - .kaniko-build-image
+  variables:
+    IMAGE_NAME: ${REGISTRY_BASE_URL}/runtime
+    IMAGE_TAG: ${PREFIX}${CI_PIPELINE_IID}_${CI_COMMIT_SHORT_SHA}
+    DOCKERFILE: Dockerfile
+    WORKING_DIRECTORY: ${CI_PROJECT_DIR}/${PYTHON_WORKING_DIRECTORY}
+    KANIKO_ARGS: --reproducible --skip-unused-stages=true --target=runtime --destination ${IMAGE_NAME}:${PREFIX}latest
+
+build-dev-image:
+  stage: provision
+  needs: []
+  rules:
+    - changes:
+      - $PYTHON_WORKING_DIRECTORY/poetry.lock
+      - $PYTHON_WORKING_DIRECTORY/Dockerfile
+      - $PYTHON_WORKING_DIRECTORY/.dockerignore
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'   # Run on the default branch
+      variables:
+        PREFIX: ${CI_DEFAULT_BRANCH}_
+    - if: '$CI_COMMIT_BRANCH == "dev"'                # Run on the dev branch
+    - when: manual
+  allow_failure: true
+  extends:
+    - .kaniko-build-image
+  variables:
+    IMAGE_NAME: ${REGISTRY_BASE_URL}/dev
+    IMAGE_TAG: ${PREFIX}${CI_PIPELINE_IID}_${CI_COMMIT_SHORT_SHA}
+    DOCKERFILE: Dockerfile
+    WORKING_DIRECTORY: ${CI_PROJECT_DIR}/${PYTHON_WORKING_DIRECTORY}
+    KANIKO_ARGS: --reproducible --skip-unused-stages=true --target=dev --destination ${IMAGE_NAME}:${PREFIX}latest
+

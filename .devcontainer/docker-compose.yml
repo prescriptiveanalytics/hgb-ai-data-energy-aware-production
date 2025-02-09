@@ -1,0 +1,26 @@
+services:
+  devcontainer:
+    container_name: ${DEVCONTAINER_NAME}
+    
+    # load environment variables from a dotenv file
+    env_file: ".env"
+    
+    # necessary to keep devcontainer alive
+    entrypoint: "sleep infinity"
+    build:
+      context: ..
+      dockerfile: Dockerfile-uv
+      # build to stage 'dev'
+      target: dev
+      # set args for build process
+      args:
+        # see Dockerfile for a full list of options
+        INSTALL_DEV_TOOLS: true
+    
+    volumes:
+      # Mounts the project folder to '/workspace'.
+      - ../:/workspace:cached
+      # Uncomment to run the container with GPU support
+    # runtime: nvidia
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all

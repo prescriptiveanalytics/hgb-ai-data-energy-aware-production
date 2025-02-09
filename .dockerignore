@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# but
+!/pyproject.toml
+!/poetry.lock
+!/hgb_ai_data_energy_aware_production/**/*.py
+
+# but but
+# Ignore the unignored
+# /hgb_ai_data_energy_aware_production/super/specific.py
