@@ -1,68 +1,59 @@
 ARG FROM_IMAGE=debian:bookworm-slim
-ARG FROM_IMAGE_RUNTIME=build
-ARG FROM_IMAGE_DEV=build
-
-FROM $FROM_IMAGE AS build
+ARG FROM_IMAGE_RUNTIME=debian:bookworm-slim
+ARG FROM_IMAGE_DEV=debian:bookworm-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# ==============================================================================
+# Builder Stage
+# ==============================================================================
+FROM $FROM_IMAGE AS build
 LABEL maintainer="Dominik Falkner <dominik.falkner@risc-software.at>"
 
-# Here you can add any system dependencies you might need
+# system dependencies dependencies, these are necessary to run your software
 RUN apt-get update && apt-get install -yq \
-    # Install dependencies for Python and uv
-    curl \
+    # needed because of quarto-cli
     ca-certificates \
-    libgdal-dev \
-    # cleanup
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install Python using uv with version from pyproject.toml
-RUN uv venv
+# ensure Python uses this virtual environment
+ENV VIRTUAL_ENV=/opt/venv \
+    PATH="$VIRTUAL_ENV/bin:$PATH"
+# create a virtual environment in a persistent location
+RUN uv venv /opt/venv
 
-# Setup directory structure
-# https://github.com/GoogleContainerTools/kaniko/issues/1508
-# seems like remnant of an earlier kaniko implementation
-# delete, to circumvent any side-effects
-# can be removed after issue above is fixed
-RUN rm -rf /workspace
-
+# prepare workspace and dependencies
 WORKDIR /workspace
-
-# Install dependencies (package itself is not installed)
 COPY pyproject.toml *.lock ./
+RUN uv sync --active && uv cache prune --ci
 
-# Install dependencies with uv
-RUN uv sync
-
-###############################################################################
-# TODO: build from FROM_IMAGE (or a plain minimal img), and just copy from build
+# ==============================================================================
+# Runtime Stage
+# ==============================================================================
 FROM $FROM_IMAGE_RUNTIME AS runtime
 
-# Copy the rest of the repository
-COPY . .
+# copy the virtual environment from the build stage - careful this won't work with the current setup
+# see: https://github.com/astral-sh/uv/issues/6782
+COPY --from=build /opt/venv /opt/venv
 
+# copy source code
+COPY . /workspace
 CMD ["bash"]
 
-###############################################################################
-FROM $FROM_IMAGE_DEV AS dev
+# ==============================================================================
+# Development Stage
+# ==============================================================================
+FROM build AS dev
 
-# Point python path to workspace
-ENV PYTHONPATH="${PYTHONPATH}:/workspace"
-
-# Install dev dependencies with uv
-RUN uv sync --all-extras
-
-# Install dev tools conditionally
-RUN apt-get update --allow-releaseinfo-change && apt-get install -yq \
-    coreutils \
-    neovim \
+# install dev tools
+RUN apt-get update && apt-get install -yq \
     curl \
     git \
-    iputils-ping \
+    libgdal-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN uvx cruft
+# install development dependencies
+RUN uv sync --all-extras --active && uv cache prune --ci \
+    && uvx cruft
