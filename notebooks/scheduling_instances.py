@@ -3,11 +3,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Generator, List
 
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 from pydantic import BaseModel, Field
 
-from energy_aware_production.data_package import SchedulingDataPackage, LocalPaths
+from energy_aware_production.data_package import LocalPaths, SchedulingDataPackage
 
 # %%
 # # Scheduling Instances
@@ -16,19 +16,20 @@ from energy_aware_production.data_package import SchedulingDataPackage, LocalPat
 
 dp = SchedulingDataPackage(LocalPaths.data)
 
+
 # %% [markdown]
 # First we read the best known makespans from a file
 def read_makespan_file(filepath: Path):
     best_known_makespans = {}
-    
-    with open(filepath, 'r') as file:
+
+    with open(filepath, "r") as file:
         for line in file:
             parts = line.strip().split()
             if len(parts) == 4:
                 key = (parts[0], parts[1], parts[2])
                 value = int(parts[3])
                 best_known_makespans[key] = value
-    
+
     return best_known_makespans
 
 
@@ -36,7 +37,8 @@ def read_makespan_file(filepath: Path):
 BEST_KNOWN_MAKESPANS = read_makespan_file(dp.scheduling_bounds)
 
 # %% [markdown]
-# Then we define the structure of the json. 
+# Then we define the structure of the json.
+
 
 class Machine(BaseModel):
     machine_id: int = Field(alias="MachineId")
@@ -45,11 +47,13 @@ class Machine(BaseModel):
     class Config:
         populate_by_name = True
 
+
 class Stage(BaseModel):
     machines: List[Machine] = Field(alias="Machines")
 
     class Config:
         populate_by_name = True
+
 
 class Task(BaseModel):
     id: int = Field(alias="Id")
@@ -61,12 +65,14 @@ class Task(BaseModel):
     class Config:
         populate_by_name = True
 
+
 class Job(BaseModel):
     id: int = Field(alias="Id")
     tasks: List[Task] = Field(alias="Tasks")
 
     class Config:
         populate_by_name = True
+
 
 class ProblemInstance(BaseModel):
     number_of_jobs: int = Field(alias="NumberOfJobs")
@@ -84,70 +90,75 @@ class ProblemInstance(BaseModel):
     class Config:
         populate_by_name = True
 
+
 # %%
 def load_text_files_from_directory(base_dir: Path, pattern="*.txt") -> Generator[tuple[str, str], None, None]:
     """
     Loads text files from a given directory that match the specified pattern.
-    
+
     :param base_dir: The base directory containing the files.
     :param pattern: The filename pattern (default: "*.txt").
     :return: A generator yielding (filename, file_content) tuples.
     """
     file_paths = base_dir.glob(pattern)
-    
+
     for file_path in file_paths:
         with open(file_path, "r", encoding="utf-8") as file:
             yield file_path, file.read()
+
 
 # %%
 def calculate_amplifiers(v_range: List[float], alpha: float, beta: float) -> Dict[float, float]:
     amplifiers = {}
     for v in v_range:
-        amplifiers[v] = round(v ** beta * alpha, 2)
+        amplifiers[v] = round(v**beta * alpha, 2)
     return amplifiers
 
+
 def calculate_speedup(
-        amplifiers: dict[int, float], 
-        processing_time: int,
-        *,
-        precision_enenrgy: int = 2
+    amplifiers: dict[int, float], processing_time: int, *, precision_enenrgy: int = 2
 ) -> Dict[int, float]:
     return {
-        int(round((processing_time / k), 0)): round(processing_time * v, precision_enenrgy) 
+        int(round((processing_time / k), 0)): round(processing_time * v, precision_enenrgy)
         for k, v in amplifiers.items()
     }
 
+
 def transform_input_to_json(
-    input_str: str, instance_id: str, 
-    *, 
-    v_min: float = 1, v_max: float = 2.0, v_step: float = 0.1, 
-    alpha: float = 1.0, beta: float = 2.0
+    input_str: str,
+    instance_id: str,
+    *,
+    v_min: float = 1,
+    v_max: float = 2.0,
+    v_step: float = 0.1,
+    alpha: float = 1.0,
+    beta: float = 2.0,
 ) -> str:
     lines = input_str.strip().split("\n")
-    
+
     # Read Number of Jobs and Number of Stages
     num_jobs, num_stages = map(int, lines[0].split())
-    
+
     # Read number of machines per stage
     machines_per_stage = list(map(int, lines[1].split()))
-    
+
     # Read processing times for jobs
     # processing_times = [list(map(int, line.split())) for line in lines[2:]]
     processing_times = np.array([list(map(int, line.split())) for line in lines[2:]]).T
-    
+
     # Define speed range using numpy for better precision
     v_range = np.round(np.arange(v_min, v_max + v_step, v_step), 2).tolist()
-    
+
     # Retrieve known makespan from lookup table
-    best_known_makespan = BEST_KNOWN_MAKESPANS.get(tuple(instance_id.split('_')), -1)
+    best_known_makespan = BEST_KNOWN_MAKESPANS.get(tuple(instance_id.split("_")), -1)
     if best_known_makespan == -1:
         raise ValueError(f"Best known makespan not found for instance {instance_id}")
-    
+
     best_known_energy = best_known_makespan * alpha
-    
+
     # Compute velocity amplifiers
     amplifiers = calculate_amplifiers(v_range, alpha, beta)
-    
+
     # Construct the JSON structure
     machine_id = 0
     stage_list = []
@@ -155,41 +166,48 @@ def transform_input_to_json(
         machines = [Machine(machine_id=machine_id + i, stage_number=stage_number) for i in range(num_machines)]
         stage_list.append(Stage(machines=machines))
         machine_id += num_machines
-    
+
     task_id = 0
     job_list = []
     for job_id, job_times in enumerate(processing_times):
         tasks = []
         for stage, time in enumerate(job_times):
-            tasks.append(Task(
-                id=task_id, stage=stage, processing_time=time, speed_up=calculate_speedup(amplifiers, time)
-            ))
+            tasks.append(
+                Task(id=task_id, stage=stage, processing_time=time, speed_up=calculate_speedup(amplifiers, time))
+            )
             task_id += 1
         job_list.append(Job(id=job_id, tasks=tasks))
-    
+
     return ProblemInstance(
         number_of_jobs=num_jobs,
         number_of_stages=num_stages,
-        instance=instance_id.split('_')[-1],
+        instance=instance_id.split("_")[-1],
         best_known_makespan=best_known_makespan,
         best_known_energy=best_known_energy,
         stage_list=stage_list,
         job_list=job_list,
         amplifiers=amplifiers,
         alpha=alpha,
-        beta=beta
+        beta=beta,
     )
+
 
 # %% [markdown]
 # Lastly we define necessary parameters
 parameters = dict(
-    v_min=1, v_max= 2.0, v_step=0.1, alpha=10, beta= 2.0,
+    v_min=1,
+    v_max=2.0,
+    v_step=0.1,
+    alpha=10,
+    beta=2.0,
 )
 # %%
 # Example usage
 schema = None
-for index, (filename, content) in enumerate(load_text_files_from_directory(Path('/workspace/data/scheduling/raw_input/instances')), start=1):
-    instance_id = filename.name.replace('instancia_', '').replace('.txt', '')
+for index, (filename, content) in enumerate(
+    load_text_files_from_directory(Path("/workspace/data/scheduling/raw_input/instances")), start=1
+):
+    instance_id = filename.name.replace("instancia_", "").replace(".txt", "")
     instance = transform_input_to_json(content, instance_id, **parameters)
 
     if schema is None:
@@ -197,7 +215,7 @@ for index, (filename, content) in enumerate(load_text_files_from_directory(Path(
 
     stringified = json.dumps(instance.model_dump(by_alias=True))
     # save to file
-    target_path = (dp.json_instances / instance_id).with_suffix('.json')
+    target_path = (dp.json_instances / instance_id).with_suffix(".json")
     with open(target_path, "w") as file:
         file.write(stringified)
 
@@ -217,10 +235,10 @@ mean_value = np.mean(values)
 median_value = np.median(values)
 
 plt.figure(figsize=(10, 6))
-plt.plot(values, marker='o', linestyle='-', color='b', label='Makespan')
-plt.xlabel('Instance Index')
-plt.ylabel('Makespan')
-plt.title('Best Known Makespans')
+plt.plot(values, marker="o", linestyle="-", color="b", label="Makespan")
+plt.xlabel("Instance Index")
+plt.ylabel("Makespan")
+plt.title("Best Known Makespans")
 plt.legend()
 plt.grid(True)
 plt.show()
@@ -241,14 +259,13 @@ sorted_averages = [average_makespans[group] for group in sorted_groups]
 
 # Plot
 plt.figure(figsize=(12, 6))
-plt.bar(sorted_groups, sorted_averages, color='skyblue')
-plt.xlabel('Number of Stages')
-plt.ylabel('Average Makespan')
-plt.title('Average Makespan by Number of Stages')
+plt.bar(sorted_groups, sorted_averages, color="skyblue")
+plt.xlabel("Number of Stages")
+plt.ylabel("Average Makespan")
+plt.title("Average Makespan by Number of Stages")
 plt.xticks(sorted_groups)
-plt.grid(axis='y')
+plt.grid(axis="y")
 plt.show()
-
 
 
 # %%
