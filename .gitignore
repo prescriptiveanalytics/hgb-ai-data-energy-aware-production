@@ -30,7 +30,6 @@ output/
 # Jupyter
 *.ipynb
 .ipynb_checkpoints/
-notebooks/
 
 # IPython
 profile_default/
