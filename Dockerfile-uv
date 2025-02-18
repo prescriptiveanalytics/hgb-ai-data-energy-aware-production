@@ -51,6 +51,7 @@ FROM build AS dev
 RUN apt-get update && apt-get install -yq \
     curl \
     git \
+    neovim \
     libgdal-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
