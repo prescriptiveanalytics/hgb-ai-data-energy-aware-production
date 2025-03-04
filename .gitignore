@@ -22,7 +22,7 @@ output/
 .envrc
 
 # dotenv
-.env
+# .env
 
 # Hypothesis
 .hypothesis/
@@ -90,3 +90,5 @@ coverage.xml
 cover/
 *-junit.xml
 liccheck_reporting.txt
+
+!.devcontainer/*
