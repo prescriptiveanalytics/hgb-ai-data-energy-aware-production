@@ -5,6 +5,7 @@ from typing import Any, Dict, Generator, List
 
 import numpy as np
 from matplotlib import pyplot as plt
+import pandas as pd
 from pydantic import BaseModel, Field
 
 from energy_aware_production.data_package import LocalPaths, SchedulingDataPackage
@@ -115,13 +116,26 @@ def calculate_amplifiers(v_range: List[float], alpha: float, beta: float) -> Dic
     return amplifiers
 
 
-def calculate_speedup(
-    amplifiers: dict[int, float], processing_time: int, *, precision_enenrgy: int = 2
+def calculate_speedup_for_task(
+    amplifiers: dict[int, float], processing_time: int, 
+    *, 
+    precision_energy: int = 3,
+    precision_time: int = 3,
 ) -> Dict[int, float]:
-    return {
-        int(round((processing_time / k), 0)): round(processing_time * v, precision_enenrgy)
-        for k, v in amplifiers.items()
-    }
+    """
+    Calculate the speedup and energy cost for a given processing time and energy amplifiers.
+    """
+
+    speedup = {}
+    for time_divisor, energy_increase_factor in amplifiers.items():
+        # pt = processing time
+        pt_speedup = round(processing_time / time_divisor, precision_time)
+        total_energy_cost = processing_time * energy_increase_factor
+        energy_per_pt = round(total_energy_cost / pt_speedup, precision_energy)
+
+        # map speedup processing time to energy costs per minute
+        speedup[int(pt_speedup)] = int(energy_per_pt)
+    return speedup
 
 
 def transform_input_to_json(
@@ -133,6 +147,8 @@ def transform_input_to_json(
     v_step: float = 0.1,
     alpha: float = 1.0,
     beta: float = 2.0,
+    input_energy_coverage: float = 0.8,
+    average_input_energy: float | None = None,
 ) -> str:
     lines = input_str.strip().split("\n")
 
@@ -153,6 +169,11 @@ def transform_input_to_json(
     best_known_makespan = BEST_KNOWN_MAKESPANS.get(tuple(instance_id.split("_")), -1)
     if best_known_makespan == -1:
         raise ValueError(f"Best known makespan not found for instance {instance_id}")
+    
+    # Calculate alpha based on the provided energy source. It should cover 
+    # the energy consumption of about 80% of the makespan.
+    if average_input_energy is not None:
+        alpha = (best_known_makespan * input_energy_coverage) / average_input_energy
 
     best_known_energy = best_known_makespan * alpha
 
@@ -173,7 +194,7 @@ def transform_input_to_json(
         tasks = []
         for stage, time in enumerate(job_times):
             tasks.append(
-                Task(id=task_id, stage=stage, processing_time=time, speed_up=calculate_speedup(amplifiers, time))
+                Task(id=task_id, stage=stage, processing_time=time, speed_up=calculate_speedup_for_task(amplifiers, time))
             )
             task_id += 1
         job_list.append(Job(id=job_id, tasks=tasks))
@@ -192,6 +213,17 @@ def transform_input_to_json(
     )
 
 
+# %%
+city = 'Wien'
+base_path = Path("/workspace/data/pv/pvgis_data")
+data = pd.read_csv(base_path / f"{city}.csv")
+data["ds"] = pd.to_datetime(data["ds"])
+data.set_index("ds", inplace=True)
+
+daily_power = data["power"].resample("D").sum()
+mean_power = daily_power.mean()
+median_power = daily_power.median()
+
 # %% [markdown]
 # Lastly we define necessary parameters
 parameters = dict(
@@ -200,6 +232,7 @@ parameters = dict(
     v_step=0.1,
     alpha=10,
     beta=2.0,
+    # average_input_energy=median_power,
 )
 # %%
 # Example usage

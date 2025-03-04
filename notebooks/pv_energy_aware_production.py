@@ -430,12 +430,11 @@ with open(base_path / "metadata.json", "w") as f:
 city = "Wien"
 base_path = Path("pvgis_data")
 base_path = Path("/workspace/data/pv/pvgis_data")
-# base_path = Path('/Users/dfalkner/projects/pv-surrogate-eurocast/data/pv/pvgis_data')
 data = pd.read_csv(base_path / f"{city}.csv")
 
 data["ds"] = pd.to_datetime(data["ds"])
-fig, ax = plt.subplots(figsize=(12, 6))
 data.set_index("ds", inplace=True)
+fig, ax = plt.subplots(figsize=(12, 6))
 data["power"].head(7 * 24).plot(ax=ax, x="ds", color="skyblue")
 
 # Customizing the plot
@@ -486,7 +485,7 @@ plt.axvline(median_power, color="g", linestyle="--", label=f"Median: {median_pow
 # labels, title, and legend
 plt.xlabel("Daily Power Production (W)")
 plt.ylabel("Count")
-plt.title("Histogram of Daily Power Consumption (W)")
+plt.title("Histogram of Daily Power Production (W)")
 plt.legend()
 plt.grid(axis="y", linestyle="--", alpha=0.6)
 
