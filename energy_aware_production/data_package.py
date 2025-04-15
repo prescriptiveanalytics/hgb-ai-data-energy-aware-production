@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
-
-
-from pydantic import BaseModel, Field
 from typing import Any, Dict, List
 
+from pydantic import BaseModel, Field
 
 
 @dataclass
@@ -46,10 +44,6 @@ class Job(BaseModel):
         populate_by_name = True
 
 
-# %% [markdown]
-# Then we define the structure of the json.
-
-
 class Machine(BaseModel):
     machine_id: int = Field(alias="MachineId")
     stage_number: int = Field(alias="StageNumber")
@@ -73,6 +67,7 @@ class ProblemInstance(BaseModel):
     amplifiers: dict[Any, float] = Field(alias="Amplifiers")
     alpha: float = Field(alias="Alpha")
     beta: float = Field(alias="Beta")
+    pv_scaling_factor: float = Field(alias="PvScalingFactor", default=None)
     best_known_makespan: int = Field(alias="BestKnownMakespan")
     best_known_energy: int = Field(alias="BestKnownEnergy")
     stage_list: List[Stage] = Field(alias="StageList")

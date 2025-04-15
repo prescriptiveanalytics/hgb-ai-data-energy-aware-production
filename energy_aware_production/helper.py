@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def read_makespan_file(filepath: Path):
     best_known_makespans = {}
 
@@ -12,4 +13,3 @@ def read_makespan_file(filepath: Path):
                 best_known_makespans[key] = value
 
     return best_known_makespans
-

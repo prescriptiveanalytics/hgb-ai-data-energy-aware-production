@@ -143,6 +143,7 @@ dependencies = [
     "geopandas<2.0.0,>=1.0.1",
     "geopy<3.0.0,>=2.4.1",
     "ipykernel>=6.29.5",
+    "geodatasets>=2024.8.0",
 ]
 name = "hgb-ai-data-energy-aware-production"
 version = "0.0.1"

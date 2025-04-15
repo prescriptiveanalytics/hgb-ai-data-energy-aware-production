@@ -5,6 +5,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import geopandas as gpd
+import geodatasets
 import numpy as np
 import open_mastr
 import pandas as pd
@@ -257,7 +258,7 @@ print(industrial_cities)
 # %%
 def plot_coordinates_on_map(df):
     # Load a more detailed map of Austria
-    austria = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    austria = gpd.read_file(geodatasets.get_path("naturalearth.countries"))
     austria = austria[austria.name == "Austria"]
 
     # Create a GeoDataFrame with the coordinates
