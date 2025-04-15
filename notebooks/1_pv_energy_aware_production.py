@@ -4,10 +4,9 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-import geopandas as gpd
 import geodatasets
+import geopandas as gpd
 import numpy as np
-import open_mastr
 import pandas as pd
 import pandera as pa
 import requests
@@ -16,45 +15,12 @@ from adjustText import adjust_text
 from matplotlib import pyplot as plt
 from shapely import Point
 
-raw_mastr_file = "mastr_raw_solar.csv"
+from energy_aware_production.data_package import EnergyAwareSchedulingDataPackage, LocalPaths
 
 # %% [markdown]
 # # Energy Aware Production
-# Download all the data from mastr and use it as parameter estimates
 
-m = open_mastr.Mastr()
-m.download()
-m.to_csv()
-
-# %% [markdown]
-# Load and number of columns (minimizes compute time later on)
-
-base_mastr_path = Path(m.output_dir)
-csv_path = base_mastr_path / "data" / "dataversion-2025-02-03" / "bnetza_mastr_solar_raw.csv"
-
-data = pd.read_csv(csv_path)
-
-data[
-    [
-        "Lage",
-        "Hauptausrichtung",
-        "Einspeisungsart",
-        "Einheittyp",
-        "Bruttoleistung",
-        "Registrierungsdatum",
-        "Postleitzahl",
-        "Laengengrad",
-        "Breitengrad",
-        "Nettonennleistung",
-        "FernsteuerbarkeitNb",
-        "FernsteuerbarkeitDv",
-        "FernsteuerbarkeitDr",
-        "EinheitlicheAusrichtungUndNeigungswinkel",
-        "GemeinsamerWechselrichterMitSpeicher",
-        "HauptausrichtungNeigungswinkel",
-        "Nutzungsbereich",
-    ]
-].to_csv(raw_mastr_file)
+dp = EnergyAwareSchedulingDataPackage(LocalPaths.data)
 
 # %% [markdown]
 # ## Filter for industrial data
@@ -105,7 +71,7 @@ def filter_mastr(mastr_solar_path: Path, target_path: Path) -> pd.DataFrame:
     # - Must be a rooftop or facade installation
     # - kwP must be over 0 and below the 95% quantile
     # - Must have a valid orientation and inclination
-    mastr = pd.read_csv(mastr_solar_path)
+    mastr = pd.read_csv(mastr_solar_path, low_memory=False)
 
     mastr = mastr[mastr["Lage"] == "Bauliche Anlagen (Hausdach, Gebäude und Fassade)"]
 
@@ -160,14 +126,14 @@ def filter_mastr(mastr_solar_path: Path, target_path: Path) -> pd.DataFrame:
         inplace=True,
     )
 
-    mastr.to_parquet(target_path)
+    mastr.to_csv(target_path)
 
     return target_path
 
 
 # %%
-file_name = filter_mastr(raw_mastr_file, "industrial_mastr_solar.parquet")
-industial_data = pd.read_parquet(file_name)
+file_name = filter_mastr(dp.pv_mastr_column_filtered, dp.pv_mastr_industrial_solar)
+industial_data = pd.read_csv(file_name, low_memory=False)
 
 # %%
 
@@ -254,12 +220,15 @@ for entry in data:
 industrial_cities = pd.DataFrame(data)
 print(industrial_cities)
 
+# %%
+industrial_cities = pd.read_csv(dp.pv_industrial_cities)
 
 # %%
 def plot_coordinates_on_map(df):
     # Load a more detailed map of Austria
-    austria = gpd.read_file(geodatasets.get_path("naturalearth.countries"))
-    austria = austria[austria.name == "Austria"]
+    url = "https://naciscdn.org/naturalearth/110m/cultural/ne_110m_admin_0_countries.zip"
+    austria = gpd.read_file(url)
+    austria = austria[austria.SOVEREIGNT == "Austria"]
 
     # Create a GeoDataFrame with the coordinates
     geometry = [Point(xy) for xy in zip(df["longitude"], df["latitude"])]
@@ -435,6 +404,9 @@ data = pd.read_csv(base_path / f"{city}.csv")
 
 data["ds"] = pd.to_datetime(data["ds"])
 data.set_index("ds", inplace=True)
+
+# %%
+
 fig, ax = plt.subplots(figsize=(12, 6))
 data["power"].head(7 * 24).plot(ax=ax, x="ds", color="skyblue")
 
@@ -451,45 +423,50 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 plt.show()
 
-
 # %%
-# Resample the data to daily frequency and aggregate (e.g., sum or mean)
 monthly_data = data["power"].resample("M").sum()
 
-# Plotting the aggregated power data as a bar plot
-fig, ax = plt.subplots(figsize=(12, 6))
-monthly_data.head(12).plot(kind="bar", ax=ax, color="skyblue")
+# Convert to DataFrame for seaborn compatibility
+monthly_df = monthly_data.reset_index()
+monthly_df.columns = ['Date', 'MonthlyPower']
 
-# Customizing the plot
-ax.set_title(f"Monthly Power Production ({city})", fontsize=16)
-ax.set_xlabel("Date", fontsize=14)
-ax.set_ylabel("Power (W)", fontsize=14)
-ax.grid(True, axis="y")
+# Plot with seaborn
+plt.figure(figsize=(12, 6))
+sns.barplot(data=monthly_df.head(12), x='Date', y='MonthlyPower', color='skyblue')
 
-# Formatting the x-axis to show dates more clearly
-ax.set_xticklabels(monthly_data.head(12).index.strftime("%Y %B"), rotation=45, ha="right")
+# Title and labels
+plt.title(f"Monthly Power Production ({city})", fontsize=16)
+plt.xlabel("Date", fontsize=14)
+plt.ylabel("Power (W)", fontsize=14)
+plt.grid(True, axis="y", linestyle="--", alpha=0.6)
+
+# Format x-tick labels
+plt.xticks(ticks=range(len(monthly_df.head(12))), labels=monthly_df.head(12)['Date'].dt.strftime("%Y %B"), rotation=45, ha='right')
 
 plt.tight_layout()
 plt.show()
 
 # %%
+# Resample to daily
 daily_power = data["power"].resample("D").sum()
 mean_power = daily_power.mean()
 median_power = daily_power.median()
 
-plt.hist(daily_power, bins=15, edgecolor="black", alpha=0.7, color="skyblue")
+# Plot with seaborn
+plt.figure(figsize=(10, 6))
+sns.histplot(daily_power, bins=15, color="skyblue", edgecolor="black", alpha=0.8)
 
-# add mean and median lines
-plt.axvline(mean_power, color="r", linestyle="--", label=f"Mean: {mean_power:.2f}")
-plt.axvline(median_power, color="g", linestyle="--", label=f"Median: {median_power:.2f}")
+# Add mean and median lines
+plt.axvline(mean_power, color="r", linestyle="--", linewidth=2, label=f"Mean: {mean_power:.2f} W")
+plt.axvline(median_power, color="g", linestyle="--", linewidth=2, label=f"Median: {median_power:.2f} W")
 
-# labels, title, and legend
-plt.xlabel("Daily Power Production (W)")
-plt.ylabel("Count")
-plt.title("Histogram of Daily Power Production (W)")
+# Labels, title, legend
+plt.xlabel("Daily Power Production (W)", fontsize=12)
+plt.ylabel("Count", fontsize=12)
+plt.title("Histogram of Daily Power Production (W)", fontsize=14)
 plt.legend()
 plt.grid(axis="y", linestyle="--", alpha=0.6)
-
-# Show plot
+plt.tight_layout()
 plt.show()
+
 # %%

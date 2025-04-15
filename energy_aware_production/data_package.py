@@ -11,18 +11,34 @@ class LocalPaths:
     data: Path = root / "data"
 
 
-class SchedulingDataPackage:
+class EnergyAwareSchedulingDataPackage:
     def __init__(self, root: Path):
         self.root = root
+
+        # pv related fields
+        self.pv = root / "pv"
+        self.pv_figures = self.pv / "figures"
+        self.pv_meta = self.pv / "meta"
+        self.pv_industrial_cities = self.pv_meta / "industrial_cities.csv"
+        self.pv_mastr_column_filtered = self.pv_meta / "mastr_column_filtered.csv"
+        self.pv_industrial_parameter_distribution = self.pv_meta / "industrial_parameter_distribution.csv"
+        self.pv_mastr_industrial_solar = self.pv_meta / "mastr_industrial_solar.csv"
+
+        self.pv_pvgis_data = self.pv / "pvgis_data"
+        self.pv_energy_prices = self.pv / "energy_prices_2024.csv"
+
+        # scheduling
         self.scheduling = root / "scheduling"
+        self.scheduling_raw_input = self.scheduling / "raw_input"
+        self.scheduling_instances = self.scheduling_raw_input / "instances"
+        self.scheduling_bounds = self.scheduling_raw_input / "best_makespans.txt"
+        self.scheduling_json_instances = self.scheduling / "instances"
 
-        self.raw_input = self.scheduling / "raw_input"
-        self.scheduling_instances = self.raw_input / "instances"
-        self.scheduling_bounds = self.raw_input / "best_makespans.txt"
+        # schema for generating class files for different programming languages
+        self.scheduling_schema_json = self.scheduling / "schema.json"
 
-        self.schema_json = self.scheduling / "schema.json"
-        self.json_instances = self.scheduling / "instances"
-        self.parameters_json = self.json_instances / "parameters.json"
+        # parameters for creating instances
+        self.scheduling_parameters_json = self.scheduling_json_instances / "parameters.json"
 
 
 class Task(BaseModel):

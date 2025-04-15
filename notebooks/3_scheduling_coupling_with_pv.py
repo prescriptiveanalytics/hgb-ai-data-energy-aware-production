@@ -7,14 +7,14 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from energy_aware_production.data_package import (
+    EnergyAwareSchedulingDataPackage,
     LocalPaths,
     ProblemInstance,
-    SchedulingDataPackage,
 )
 from energy_aware_production.helper import read_makespan_file
 
 # %%
-dp = SchedulingDataPackage(LocalPaths.data)
+dp = EnergyAwareSchedulingDataPackage(LocalPaths.data)
 
 # %% [markdown]
 # # Helper Functions
@@ -38,7 +38,7 @@ best_known_makespans = read_makespan_file(dp.scheduling_bounds)
 typical_amplifier = "1.8"
 
 stats = []
-for instance_path in dp.json_instances.glob("*.json"):
+for instance_path in dp.scheduling_json_instances.glob("*.json"):
     if instance_path.name.endswith("parameters.json"):
         continue
 

@@ -8,11 +8,11 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from energy_aware_production.data_package import (
+    EnergyAwareSchedulingDataPackage,
     Job,
     LocalPaths,
     Machine,
     ProblemInstance,
-    SchedulingDataPackage,
     Stage,
     Task,
 )
@@ -23,7 +23,7 @@ from energy_aware_production.helper import read_makespan_file
 # We prepare the scheduling instances by transforming the input data into a JSON format and
 # adding information about the speedup and increased energy consumption for each task.
 
-dp = SchedulingDataPackage(LocalPaths.data)
+dp = EnergyAwareSchedulingDataPackage(LocalPaths.data)
 
 
 # %% [markdown]
@@ -189,15 +189,15 @@ for index, (filename, content) in enumerate(load_text_files_from_directory(dp.sc
 
     stringified = json.dumps(instance.model_dump(by_alias=True))
     # save to file
-    target_path = (dp.json_instances / instance_id).with_suffix(".json")
+    target_path = (dp.scheduling_json_instances / instance_id).with_suffix(".json")
     with open(target_path, "w") as file:
         file.write(stringified)
 
 # save the schema to a file
-with open(dp.schema_json, "w") as file:
+with open(dp.scheduling_schema_json, "w") as file:
     json.dump(schema, file, indent=4)
 
-with open(dp.parameters_json, "w+") as file:
+with open(dp.scheduling_parameters_json, "w+") as file:
     json.dump(parameters, file, indent=4)
 
 # %%
