@@ -4,7 +4,6 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-import geodatasets
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -15,7 +14,10 @@ from adjustText import adjust_text
 from matplotlib import pyplot as plt
 from shapely import Point
 
-from energy_aware_production.data_package import EnergyAwareSchedulingDataPackage, LocalPaths
+from energy_aware_production.data_package import (
+    EnergyAwareSchedulingDataPackage,
+    LocalPaths,
+)
 
 # %% [markdown]
 # # Energy Aware Production
@@ -223,6 +225,7 @@ print(industrial_cities)
 # %%
 industrial_cities = pd.read_csv(dp.pv_industrial_cities)
 
+
 # %%
 def plot_coordinates_on_map(df):
     # Load a more detailed map of Austria
@@ -428,11 +431,11 @@ monthly_data = data["power"].resample("M").sum()
 
 # Convert to DataFrame for seaborn compatibility
 monthly_df = monthly_data.reset_index()
-monthly_df.columns = ['Date', 'MonthlyPower']
+monthly_df.columns = ["Date", "MonthlyPower"]
 
 # Plot with seaborn
 plt.figure(figsize=(12, 6))
-sns.barplot(data=monthly_df.head(12), x='Date', y='MonthlyPower', color='skyblue')
+sns.barplot(data=monthly_df.head(12), x="Date", y="MonthlyPower", color="skyblue")
 
 # Title and labels
 plt.title(f"Monthly Power Production ({city})", fontsize=16)
@@ -441,7 +444,12 @@ plt.ylabel("Power (W)", fontsize=14)
 plt.grid(True, axis="y", linestyle="--", alpha=0.6)
 
 # Format x-tick labels
-plt.xticks(ticks=range(len(monthly_df.head(12))), labels=monthly_df.head(12)['Date'].dt.strftime("%Y %B"), rotation=45, ha='right')
+plt.xticks(
+    ticks=range(len(monthly_df.head(12))),
+    labels=monthly_df.head(12)["Date"].dt.strftime("%Y %B"),
+    rotation=45,
+    ha="right",
+)
 
 plt.tight_layout()
 plt.show()

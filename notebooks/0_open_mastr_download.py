@@ -1,10 +1,14 @@
 # %%
 
 from pathlib import Path
+
 import open_mastr
 import pandas as pd
 
-from energy_aware_production.data_package import EnergyAwareSchedulingDataPackage, LocalPaths
+from energy_aware_production.data_package import (
+    EnergyAwareSchedulingDataPackage,
+    LocalPaths,
+)
 
 # %%
 
@@ -14,7 +18,7 @@ dp = EnergyAwareSchedulingDataPackage(LocalPaths.data)
 # # Data for Energy Aware Production
 # Download all the data from mastr and use it to estimate which PV
 # Parameters are used in productin.
-# Careful! This will download a lot of data and take a long time. You can use 
+# Careful! This will download a lot of data and take a long time. You can use
 # the precalculated data later on.
 
 m = open_mastr.Mastr()
@@ -58,4 +62,3 @@ data[
 data = pd.read_csv(dp.pv_mastr_column_filtered)
 data.head()
 print(data.shape)
-
