@@ -1,14 +1,25 @@
 site_name: hgb-ai-data-energy-aware-production Documentation
+repo_url: https://github.com/prescriptiveanalytics/hgb-ai-data-energy-aware-production
 
 theme:
   name: material
+
+nav:
+  - index.md
+  - usage.md
+  - data_package.md
+  - problem_instance_structure.md
+  - problem_formulation.md
+  - behinde_the_scenes.md
+  - misc.md
+  - faq.md
 
 plugins:
   - search
   - mkdocstrings:
       handlers:
         python:
-          import:
+          inventories:
             - https://docs.python-requests.org/en/master/objects.inv
           paths: [.]
           options:
@@ -17,3 +28,15 @@ plugins:
             separate_signature: true
             show_signature_annotations: true
             signature_crossrefs: false
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js
+  - js/math-render.js
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css

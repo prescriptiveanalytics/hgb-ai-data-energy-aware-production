@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from energy_aware_production.data_package import (
+from energy_aware_production_data.data_package import (
     EnergyAwareSchedulingDataPackage,
     Job,
     LocalPaths,
@@ -16,7 +16,7 @@ from energy_aware_production.data_package import (
     Stage,
     Task,
 )
-from energy_aware_production.helper import read_makespan_file
+from energy_aware_production_data.helper import read_makespan_file
 
 # %%
 # # Scheduling Instances

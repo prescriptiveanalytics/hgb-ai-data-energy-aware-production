@@ -6,12 +6,12 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from energy_aware_production.data_package import (
+from energy_aware_production_data.data_package import (
     EnergyAwareSchedulingDataPackage,
     LocalPaths,
     ProblemInstance,
 )
-from energy_aware_production.helper import read_makespan_file
+from energy_aware_production_data.helper import read_makespan_file
 
 # %%
 dp = EnergyAwareSchedulingDataPackage(LocalPaths.data)

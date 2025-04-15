@@ -568,7 +568,7 @@ wheels = [
 ]
 
 [[package]]
-name = "hgb-ai-data-energy-aware-production"
+name = "hgb-ai-energy-aware-production-data"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
@@ -581,6 +581,7 @@ dependencies = [
     { name = "open-mastr" },
     { name = "pandera" },
     { name = "pyarrow" },
+    { name = "pymdown-extensions" },
     { name = "scikit-learn" },
     { name = "seaborn" },
 ]
@@ -614,6 +615,7 @@ requires-dist = [
     { name = "open-mastr", specifier = ">=0.14.5,<1.0.0" },
     { name = "pandera", specifier = ">=0.22.1,<1.0.0" },
     { name = "pyarrow", specifier = ">=19.0.0,<20.0.0" },
+    { name = "pymdown-extensions", specifier = ">=10.14.3" },
     { name = "scikit-learn", specifier = ">=1.6.1,<2.0.0" },
     { name = "seaborn", specifier = ">=0.13.2,<1.0.0" },
 ]
