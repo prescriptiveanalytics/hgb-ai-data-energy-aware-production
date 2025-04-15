@@ -1,14 +1,19 @@
 # %%
 import json
 from pathlib import Path
-from typing import Any, Dict, Generator, List
+from typing import Dict, Generator, List
 
 import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
-from pydantic import BaseModel, Field
 
 from energy_aware_production.data_package import LocalPaths, SchedulingDataPackage
+from energy_aware_production.data_package import ProblemInstance
+from energy_aware_production.data_package import Job
+from energy_aware_production.data_package import Task
+from energy_aware_production.data_package import Stage
+from energy_aware_production.data_package import Machine
+from energy_aware_production.helper import read_makespan_file
 
 # %%
 # # Scheduling Instances
@@ -20,77 +25,8 @@ dp = SchedulingDataPackage(LocalPaths.data)
 
 # %% [markdown]
 # First we read the best known makespans from a file
-def read_makespan_file(filepath: Path):
-    best_known_makespans = {}
-
-    with open(filepath, "r") as file:
-        for line in file:
-            parts = line.strip().split()
-            if len(parts) == 4:
-                key = (parts[0], parts[1], parts[2])
-                value = int(parts[3])
-                best_known_makespans[key] = value
-
-    return best_known_makespans
-
-
 # Lookup table for best known makespan
 BEST_KNOWN_MAKESPANS = read_makespan_file(dp.scheduling_bounds)
-
-# %% [markdown]
-# Then we define the structure of the json.
-
-
-class Machine(BaseModel):
-    machine_id: int = Field(alias="MachineId")
-    stage_number: int = Field(alias="StageNumber")
-
-    class Config:
-        populate_by_name = True
-
-
-class Stage(BaseModel):
-    machines: List[Machine] = Field(alias="Machines")
-
-    class Config:
-        populate_by_name = True
-
-
-class Task(BaseModel):
-    id: int = Field(alias="Id")
-    stage: int = Field(alias="Stage")
-    processing_time: int = Field(alias="ProcessingTime")
-    # this keys will be strings (json enforces keys to be strings)
-    speed_up: Dict[Any, float] = Field(alias="SpeedUp")
-
-    class Config:
-        populate_by_name = True
-
-
-class Job(BaseModel):
-    id: int = Field(alias="Id")
-    tasks: List[Task] = Field(alias="Tasks")
-
-    class Config:
-        populate_by_name = True
-
-
-class ProblemInstance(BaseModel):
-    number_of_jobs: int = Field(alias="NumberOfJobs")
-    number_of_stages: int = Field(alias="NumberOfStages")
-    instance: int = Field(alias="Instance")
-    # this keys will be strings (json enforces keys to be strings)
-    amplifiers: dict[Any, float] = Field(alias="Amplifiers")
-    alpha: float = Field(alias="Alpha")
-    beta: float = Field(alias="Beta")
-    best_known_makespan: int = Field(alias="BestKnownMakespan")
-    best_known_energy: int = Field(alias="BestKnownEnergy")
-    stage_list: List[Stage] = Field(alias="StageList")
-    job_list: List[Job] = Field(alias="JobList")
-
-    class Config:
-        populate_by_name = True
-
 
 # %%
 def load_text_files_from_directory(base_dir: Path, pattern="*.txt") -> Generator[tuple[str, str], None, None]:
@@ -230,7 +166,7 @@ parameters = dict(
     v_min=1,
     v_max=2.0,
     v_step=0.1,
-    alpha=10,
+    alpha=1000,
     beta=2.0,
     # average_input_energy=median_power,
 )
@@ -238,7 +174,7 @@ parameters = dict(
 # Example usage
 schema = None
 for index, (filename, content) in enumerate(
-    load_text_files_from_directory(Path("/workspace/data/scheduling/raw_input/instances")), start=1
+    load_text_files_from_directory(dp.scheduling_instances), start=1
 ):
     instance_id = filename.name.replace("instancia_", "").replace(".txt", "")
     instance = transform_input_to_json(content, instance_id, **parameters)
