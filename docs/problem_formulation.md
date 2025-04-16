@@ -42,10 +42,10 @@ where:
 
 For $ \alpha = 1 $:
 
-- $ \beta = 0 $: Speed = Energy
-- $ \beta = 1 $: Constant energy consumption, speed has no impact
-- $ \beta = 2 $: Linear increase in energy for each increase in speed
-- $ \beta > 2 $: Quadratic increase in energy for each increase in speed
+- $ \beta = 0 $ - Energy decreases with higher speed ($E \propto \frac{1}{v}$)
+- $ \beta = 1 $ - Constant energy consumption ($E = P^{\text{nominal}}$), independent of speed
+- $ \beta = 2 $ - Energy grows linearly with speed ($E \propto v$)
+- $ \beta = 3 $ - Energy increases quadratically with speed ($E \propto v^2$)
 
 For an interactive example see [here](https://www.geogebra.org/classic/cvkz3kq5)
 
@@ -87,10 +87,10 @@ $$
 
 ### Estimated Load at Speed $v$
 
-Assuming a uniform processing speed $v$ across all jobs and stages, the average power demand is approximated by:
+Assuming a uniform processing speed $v$ and it's corresponding amplifier $a$ across all jobs and stages, the average power demand is approximated by:
 
 $$
-\text{Load}_v^{(i)} = \bar{m}^{(i)} \cdot v
+\text{Load}_v^{(i)} = \bar{m}^{(i)} \cdot a
 $$
 
 This linear estimate assumes constant machine utilization and no idle time.
@@ -105,7 +105,7 @@ $$
 
 This dimensionless factor indicates how many times larger than a 1 kWp system the PV capacity must be to support execution at speed $v$.
 
-> **Note:** All power values are expressed in watts (W). This model assumes constant power demand and uniform PV generation over the scheduling horizon.
+> **Note:** All power values are expressed in watts (W). This model assumes constant power demand.
 
 ### Summary of Variables
 

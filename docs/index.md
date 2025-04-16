@@ -5,7 +5,7 @@ The **Energy Aware Scheduling Problem** involves scheduling multiple jobs across
 ## Main Contributions
 
 - **Advanced Scheduling Benchmark**:
-A comprehensive set of scheduling instances is introduced, where tasks can optionally be accelerated based on configurable speedup parameters. An interactive GeoGebra explainer is included to visually demonstrate how speedup decisions affect scheduling behavior.
+A comprehensive set of scheduling instances is introduced, where tasks can optionally be accelerated based on configurable speedup parameters. An interactive [GeoGebra explainer](https://www.geogebra.org/classic/cvkz3kq5) is included to visually demonstrate how speedup decisions affect scheduling behavior.
 
 - **Grounded in Literature & Systematically Generated**:
 The scheduling problem is based on established formulations from academic literature. Parameterized instance generation enables controlled experimentation across a wide range of problem sizes and configurations.

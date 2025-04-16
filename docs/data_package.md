@@ -13,7 +13,7 @@ This data packapge provides scheduling problems which includes the possibilities
 ## Contents
 
 - A set of scheduling instances where each task can optionally benefit from a speedup, depending on selected parameters  
-    - Includes an interactive [GeoGebra explainer](https://www.geogebra.org/classic/rnj27rex) to help visualize the impact of speedup decisions
+    - Includes an interactive [GeoGebra explainer](https://www.geogebra.org/classic/cvkz3kq5) to help visualize the impact of speedup decisions
 - The underlying scheduling problem is based on well-known formulations from academic literature  
     - *(Reference to be added)*
 - Parameter configurations used to systematically generate diverse problem instances, enabling controlled experimentation
