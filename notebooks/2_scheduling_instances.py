@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Dict, Generator, List
 
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 
 from energy_aware_production_data.data_package import (
@@ -18,7 +17,7 @@ from energy_aware_production_data.data_package import (
 )
 from energy_aware_production_data.helper import read_makespan_file
 
-# %%
+# %% [markdown]
 # # Scheduling Instances
 # We prepare the scheduling instances by transforming the input data into a JSON format and
 # adding information about the speedup and increased energy consumption for each task.
@@ -52,7 +51,7 @@ def load_text_files_from_directory(base_dir: Path, pattern="*.txt") -> Generator
 def calculate_amplifiers(v_range: List[float], alpha: float, beta: float) -> Dict[float, float]:
     amplifiers = {}
     for v in v_range:
-        amplifiers[v] = round(v**beta * alpha, 2)
+        amplifiers[v] = round(v ** (beta) * alpha, 2)
     return amplifiers
 
 
@@ -149,17 +148,6 @@ def transform_input_to_json(
         beta=beta,
     )
 
-
-# %%
-city = "Wien"
-base_path = Path("/workspace/data/pv/pvgis_data")
-data = pd.read_csv(base_path / f"{city}.csv")
-data["ds"] = pd.to_datetime(data["ds"])
-data.set_index("ds", inplace=True)
-
-daily_power = data["power"].resample("D").sum()
-mean_power = daily_power.mean()
-median_power = daily_power.median()
 
 # %% [markdown]
 # Lastly we define necessary parameters

@@ -7511,17 +7511,17 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9e7ca549">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ff35c90c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Connected to venv (Python 3.10.17)</p>
+<p>Restarted venv (Python 3.10.17)</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=c7da17d5-57d2-441b-9744-4a998f0d9e6a">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b7ed992c-27c9-4e54-b626-7fedf912ac28">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7552,7 +7552,19 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=8469c219-dc9d-4734-aa6d-03c56134d57f">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=139453e6-c6d1-495b-81fb-87d723aaf72e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Scheduling-Instances">Scheduling Instances<a class="anchor-link" href="#Scheduling-Instances">¶</a></h1><p>We prepare the scheduling instances by transforming the input data into a JSON format and
+adding information about the speedup and increased energy consumption for each task.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1ce6a280-5d3d-4da3-96a7-61c72af5c695">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7560,18 +7572,14 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># # Scheduling Instances</span>
-<span class="c1"># We prepare the scheduling instances by transforming the input data into a JSON format and</span>
-<span class="c1"># adding information about the speedup and increased energy consumption for each task.</span>
-
-<span class="n">dp</span> <span class="o">=</span> <span class="n">EnergyAwareSchedulingDataPackage</span><span class="p">(</span><span class="n">LocalPaths</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<div class="highlight hl-python"><pre><span></span><span class="n">dp</span> <span class="o">=</span> <span class="n">EnergyAwareSchedulingDataPackage</span><span class="p">(</span><span class="n">LocalPaths</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1d19888f-bdee-4d2b-a4bd-a93246741ab2">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6698c3c6-4c51-4f9d-bb46-a77e443a5231">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7582,7 +7590,7 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=8aa1aef6-ba62-4fa5-b000-f1c3621126c7">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=66a5cd39-28cf-4310-a1a3-54489461fa27">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7596,7 +7604,7 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=dfe81353-d22f-4f53-9533-a0e3c2898f70">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d5080b7f-2c82-4c2d-8f0b-7930ddcb979f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7622,7 +7630,7 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7c1a4c10-62ec-47d8-8601-bf9e5f759053">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=8ba7e4c0-fe06-4d10-b336-bc35a8cebdcc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7633,7 +7641,7 @@ Lookup table for best known makespan</p>
 <div class="highlight hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_amplifiers</span><span class="p">(</span><span class="n">v_range</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="n">amplifiers</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v_range</span><span class="p">:</span>
-        <span class="n">amplifiers</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="n">beta</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">amplifiers</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">amplifiers</span>
 
 
@@ -7670,7 +7678,6 @@ Lookup table for best known makespan</p>
     <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
     <span class="n">input_energy_coverage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
-    <span class="n">average_input_energy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">input_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
@@ -7691,11 +7698,6 @@ Lookup table for best known makespan</p>
     <span class="n">best_known_makespan</span> <span class="o">=</span> <span class="n">BEST_KNOWN_MAKESPANS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">instance_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">best_known_makespan</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Best known makespan not found for instance </span><span class="si">{</span><span class="n">instance_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-    <span class="c1"># Calculate alpha based on the provided energy source. It should cover</span>
-    <span class="c1"># the energy consumption of about 80% of the makespan.</span>
-    <span class="k">if</span> <span class="n">average_input_energy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">best_known_makespan</span> <span class="o">*</span> <span class="n">input_energy_coverage</span><span class="p">)</span> <span class="o">/</span> <span class="n">average_input_energy</span>
 
     <span class="n">best_known_energy</span> <span class="o">=</span> <span class="n">best_known_makespan</span> <span class="o">*</span> <span class="n">alpha</span>
 
@@ -7740,30 +7742,8 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=8bef5bb7-4fea-4482-843e-fe335e254477">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="n">city</span> <span class="o">=</span> <span class="s2">"Wien"</span>
-<span class="n">base_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/workspace/data/pv/pvgis_data"</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">base_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">city</span><span class="si">}</span><span class="s2">.csv"</span><span class="p">)</span>
-<span class="n">data</span><span class="p">[</span><span class="s2">"ds"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"ds"</span><span class="p">])</span>
-<span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"ds"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">daily_power</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"power"</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"D"</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">mean_power</span> <span class="o">=</span> <span class="n">daily_power</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="n">median_power</span> <span class="o">=</span> <span class="n">daily_power</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=be422329-4c1e-4e2c-b82e-e92b1110667b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=187e47fb-8e7e-4df9-a2db-e65cc00480c8">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7773,7 +7753,7 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=c11ffde2-f518-41c1-ac0d-3ac13387f621">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=150d2cf4-4717-45f4-9fc3-10a364e47c6a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7787,14 +7767,13 @@ Lookup table for best known makespan</p>
     <span class="n">v_step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="n">alpha</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">beta</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-    <span class="c1"># average_input_energy=median_power,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e0ee3d73-1b04-4bdf-b740-b607e641bf66">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=349da262-9019-4065-9b6b-8ba44e6f6e48">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7828,7 +7807,7 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=79efb136-519e-45b7-8caf-bbb3f30d5c08">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c79ec079-45be-445d-984f-f2e4c6f5d0dc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7868,7 +7847,7 @@ Lookup table for best known makespan</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=16fef754-c508-4bea-ae7e-c2c7c081c7ed">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=12b924cf-258e-46e3-8ede-35ac6d69ed79">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>

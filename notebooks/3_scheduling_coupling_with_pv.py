@@ -19,7 +19,6 @@ dp = EnergyAwareSchedulingDataPackage(LocalPaths.data)
 # # Helper Functions
 
 
-# %%
 def read_instance(path_to_instance: str) -> ProblemInstance:
     with open(path_to_instance, "r") as f:
         data = f.read()

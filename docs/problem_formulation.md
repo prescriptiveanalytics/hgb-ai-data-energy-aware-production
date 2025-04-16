@@ -1,58 +1,131 @@
 # Problem Description
 
-In a staged flowshop scheduling problem, multiple jobs $ J = \{1, ..., n\} $ are processed through multiple stages $ S = \{1, ..., s\} $, where each stage has a set of parallel machines.
+In a staged flowshop scheduling problem, a set of jobs $ J = \{1, \dots, n\} $ is processed sequentially through multiple stages $ S = \{1, \dots, s\} $, each consisting of parallel machines.
 
-Each job $ j $ has a nominal processing time $ P_{j,s}^{\text{nominal}} $ at unit speed. However, jobs can be processed at different speeds $ v_{j,s} $, which impacts both the processing time and the energy consumption.
+Each job $ j $ has a nominal processing time $ P_{j,s}^{\text{nominal}} $ at unit processing speed. The processing speed $ v_{j,s} \in [v_{\min}, v_{\max}] $ can be adjusted per task, affecting both processing time and energy consumption.
 
 # Formulation
 
-## Known Variables
+## Parameters
 
-- $ v_{max} $, $ v_{min} $ – Minimal and maximal speedup which can be applied to a task  
-- $ P^{\text{nominal}}_{j,s} $ – Processing time of job $ j $ at stage $ s $ without any speedup.
+- $ v_{\min}, v_{\max} $ – Lower and upper bounds on processing speed  
+- $ P_{j,s}^{\text{nominal}} $ – Nominal processing time of job $ j $ at stage $ s $
 
 ## Decision Variables
 
-- $ v_{j,s} $ – Processing speed of job $ j $ at stage $ s $ (continuous variable).
-- $ P_{j,s} $ – Actual processing time of job $ j $ at stage $ s $.
-- $ E_{j,s} $ – Energy consumption of job $ j $ at stage $ s $.
-- $ C_{j,s} $ – Completion time of job $ j $ at stage $ s $.
+- $ v_{j,s} $ – Processing speed of job $ j $ at stage $ s $  
+- $ P_{j,s} $ – Actual processing time  
+- $ E_{j,s} $ – Energy consumption  
+- $ C_{j,s} $ – Completion time  
 
-## Speedup and Energy Consumption
+## Processing Time and Energy Model
 
-Each task can be sped up or slowed down using a speedup between $ v_{\min} $ and $ v_{\max} $. The processing time scales inversely with speed:
-
+Processing time is inversely proportional to speed:
 $$
 P_{j,s} = \frac{P_{j,s}^{\text{nominal}}}{v_{j,s}}
 $$
 
-The total energy consumption for a job $ j $ at stage $ s $ is given by:
-
+Energy consumption is given by:
 $$
 E_{j,s} = \alpha v_{j,s}^{\beta} P_{j,s}
 $$
 
+Substituting $P_{j,s}$ yields:
+$$
+E_{j,s} = \alpha v_{j,s}^{\beta - 1} P_{j,s}^{\text{nominal}}
+$$
+
 where:
 
-- $ E_{j,s} $ is the energy consumption,  
-- $ v_{j,s} $ is the processing speed,  
-- $ P_{j,s} $ is the actual processing time,  
-- $ \alpha $ is a scaling factor showing how much energy per process time is necessary,  
-- $ \beta $ determines how energy scales with speed ($ \beta \geq 0 $).
+- $ \alpha $ is a scaling factor  
+- $ \beta > 0 $; determines how energy scales with speed
 
-Assuming $ \alpha = 1 $, this equation shows that:
+For $ \alpha = 1 $:
 
-- If $ \beta = 2 $, energy scales quadratically with speed.
-- If $ \beta > 2 $, increasing speed causes non-linear energy growth.
-- If $ 1 < \beta < 2 $, energy grows slower than quadratically but still increases.
-- If $ \beta = 1 $, energy grows linearly with speed.
-- If $ \beta = 0 $, energy cost equals processing time regardless of speed.
+- $ \beta = 0 $: Speed = Energy
+- $ \beta = 1 $: Constant energy consumption, speed has no impact
+- $ \beta = 2 $: Linear increase in energy for each increase in speed
+- $ \beta > 2 $: Quadratic increase in energy for each increase in speed
+
+For an interactive example see [here](https://www.geogebra.org/classic/cvkz3kq5)
 
 ## Objectives
 
-The main objectives are:
+- **Minimize makespan**:
+  $$
+  C_{\max} = \max_j C_{j,s}
+  $$
+  where $s$ denotes the final stage
 
-- **Minimize makespan** ($ C_{\max} $), the total time required to process all jobs.
-- **Minimize total energy consumption** ($ P_{\max} $).
-- **Balance the trade-off** between speed and power consumption.
-- **Avoid reaching peak grid load** (By setting an arbitrary value for the power grid).
+- **Minimize total energy consumption**
+
+- **Balance performance and energy efficiency** by optimizing the speed-energy trade-off
+
+- **Prevent peak grid overload** by bounding instantaneous power
+
+## Coupling Scheduling Load with PV
+
+To integrate photovoltaic (PV) energy availability, we estimate the scheduling power demand and compare it to available PV capacity.
+
+### Definitions
+
+- $ \text{makespan}_\text{best}^{(i)} $ – Best-known makespan for instance $ i $  
+- $ P_{j,s}^{\text{nominal}} $ – Nominal processing time  
+- $ M_s $ – Set of machines at stage $ s $  
+
+### Total Processing Time
+
+$$
+T_{\text{total}}^{(i)} = \sum_{j=1}^n \sum_{k=1}^s P_{j,k}^{\text{nominal}}
+$$
+
+### Average Concurrent Machine Usage
+
+$$
+\bar{m}^{(i)} = \frac{T_{\text{total}}^{(i)}}{\text{makespan}_\text{best}^{(i)}}
+$$
+
+### Estimated Load at Speed $v$
+
+Assuming a uniform processing speed $v$ across all jobs and stages, the average power demand is approximated by:
+
+$$
+\text{Load}_v^{(i)} = \bar{m}^{(i)} \cdot v
+$$
+
+This linear estimate assumes constant machine utilization and no idle time.
+
+### PV Scaling Factor
+
+Let $ W_p^{\text{PV}} $ denote the peak PV output in watts (e.g., $1000$ W = $1$ kWp). The required PV system size to supply the estimated load is:
+
+$$
+\text{Scaling Factor}^{(i)} = \frac{\text{Load}_v^{(i)}}{W_p^{\text{PV}}}
+$$
+
+This dimensionless factor indicates how many times larger than a 1 kWp system the PV capacity must be to support execution at speed $v$.
+
+> **Note:** All power values are expressed in watts (W). This model assumes constant power demand and uniform PV generation over the scheduling horizon.
+
+### Summary of Variables
+
+| Variable | Description |
+|---------|-------------|
+| $ P_{j,s}^{\text{nominal}} $ | Nominal processing time |
+| $ \text{makespan}_\text{best}^{(i)} $ | Best-known makespan |
+| $ \bar{m}^{(i)} $ | Average concurrent machine usage |
+| $ v $ | Uniform processing speed assumed for load estimation |
+| $ W_p^{\text{PV}} $ | Peak PV capacity (W) |
+| $ \text{Scaling Factor}^{(i)} $ | Dimensionless PV scaling factor |
+
+### Additional Objectives
+
+- Minimize required PV scaling factor  
+- Align execution with PV production profiles, maximizing the PV usage  
+- Limit grid dependency by bounding $ \text{Load}_v^{(i)} $
+
+---
+
+### Multi-Objective Consideration
+
+These objectives can be incorporated into a weighted or Pareto-based multi-objective optimization framework to explore trade-offs between makespan, energy efficiency, and renewable energy utilization.
