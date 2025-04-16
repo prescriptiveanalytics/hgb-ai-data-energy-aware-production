@@ -135,7 +135,7 @@ def filter_mastr(mastr_solar_path: Path, target_path: Path) -> pd.DataFrame:
 
 # %%
 file_name = filter_mastr(dp.pv_mastr_column_filtered, dp.pv_mastr_industrial_solar)
-industial_data = pd.read_csv(file_name, low_memory=False)
+industial_data = pd.read_csv(dp.pv_mastr_industrial_solar, low_memory=False)
 
 # %%
 
@@ -331,7 +331,7 @@ def build_config(locations: dict, params: dict):
 
 
 # %%
-class NormalizedPVGISSchema(pa.SchemaModel):
+class NormalizedPVGISSchema(pa.DataFrameModel):
     ds: pd.Timestamp = pa.Field()
     power: float = pa.Field(ge=0)  # Assuming power should be >= 0
     global_irradiance: float = pa.Field(ge=0)  # Assuming global irradiance should be >= 0

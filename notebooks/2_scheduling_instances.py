@@ -89,7 +89,6 @@ def transform_input_to_json(
     alpha: float = 1.0,
     beta: float = 2.0,
     input_energy_coverage: float = 0.8,
-    average_input_energy: float | None = None,
 ) -> str:
     lines = input_str.strip().split("\n")
 
@@ -110,11 +109,6 @@ def transform_input_to_json(
     best_known_makespan = BEST_KNOWN_MAKESPANS.get(tuple(instance_id.split("_")), -1)
     if best_known_makespan == -1:
         raise ValueError(f"Best known makespan not found for instance {instance_id}")
-
-    # Calculate alpha based on the provided energy source. It should cover
-    # the energy consumption of about 80% of the makespan.
-    if average_input_energy is not None:
-        alpha = (best_known_makespan * input_energy_coverage) / average_input_energy
 
     best_known_energy = best_known_makespan * alpha
 
@@ -175,7 +169,6 @@ parameters = dict(
     v_step=0.1,
     alpha=1000,
     beta=2.0,
-    # average_input_energy=median_power,
 )
 # %%
 # Example usage

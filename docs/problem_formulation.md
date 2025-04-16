@@ -55,4 +55,4 @@ The main objectives are:
 - **Minimize makespan** ($ C_{\max} $), the total time required to process all jobs.
 - **Minimize total energy consumption** ($ P_{\max} $).
 - **Balance the trade-off** between speed and power consumption.
-- **Avoid reaching peak grid load** ($ P_{\max} $).
+- **Avoid reaching peak grid load** (By setting an arbitrary value for the power grid).

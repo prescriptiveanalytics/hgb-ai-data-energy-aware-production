@@ -1,5 +1,4 @@
 # %%
-
 import json
 
 import pandas as pd
@@ -36,6 +35,8 @@ best_known_makespans = read_makespan_file(dp.scheduling_bounds)
 # # Coupling scheduling load with PV
 
 typical_amplifier = "1.8"
+# assumed peak energy production of the PV system
+assumed_Wp_of_pv = 1000
 
 stats = []
 for instance_path in dp.scheduling_json_instances.glob("*.json"):
@@ -69,7 +70,7 @@ for instance_path in dp.scheduling_json_instances.glob("*.json"):
         avg_energy_per_speedup[k] = v * average_running_machines
 
     # calculate scaling factor for PV system
-    pv_scaling_factor = avg_energy_per_speedup[typical_amplifier] / 1000.0
+    pv_scaling_factor = avg_energy_per_speedup[typical_amplifier] / assumed_Wp_of_pv
     pi.pv_scaling_factor = round(pv_scaling_factor, 3)
 
     # save the updated model instance as json
@@ -78,14 +79,17 @@ for instance_path in dp.scheduling_json_instances.glob("*.json"):
             "instance": pi.instance,
             "number_of_jobs": pi.number_of_jobs,
             "number_of_stages": pi.number_of_stages,
+            "total_instance_size": pi.number_of_jobs * pi.number_of_stages,
             "number_of_available_machines": number_of_total_machines,
-            "typical_load": avg_energy_per_speedup[typical_amplifier],
-            "pv_scaling_factor": pv_scaling_factor,
             "average_running_machines": average_running_machines,
+            "typical_load": avg_energy_per_speedup[typical_amplifier],
+            "assumed_Wp_of_pv": assumed_Wp_of_pv,
+            "pv_scaling_factor": pv_scaling_factor,
             "best_known_makespan": best_known_makespan,
             "best_known_energy": pi.best_known_energy,
             "alpha": pi.alpha,
             "beta": pi.beta,
+            "typical_amplifier": typical_amplifier,
             "total_processing_time": total_processing_time,
         }
     )
@@ -96,6 +100,18 @@ for instance_path in dp.scheduling_json_instances.glob("*.json"):
         file.write(stringified)
 
 stats = pd.DataFrame(stats)
+stats.to_csv(dp.scheduling_stats_csv)
+
+# %%
+# update parameters
+with open(dp.scheduling_parameters_json, "r") as file:
+    data = json.load(file)
+
+data["typical_amplifier"] = typical_amplifier
+
+with open(dp.scheduling_parameters_json, "w") as file:
+    json.dump(data, file, indent=4)
+
 # %% [markdown]
 # ## Checks
 # Ensure that the number of available machines is greater than the estimated average running machines
@@ -108,9 +124,9 @@ plt.figure(figsize=(12, 6))
 plt.bar(stats["number_of_jobs"], stats["pv_scaling_factor"], alpha=0.7, color="blue")
 
 # Add labels and title
-plt.xlabel("Instance Size (Stages * Jobs)", fontsize=12)
-plt.ylabel("Typical Load", fontsize=12)
-plt.title("Typical Load vs Instance Size", fontsize=14)
+plt.xlabel("Instance Size (Jobs)", fontsize=12)
+plt.ylabel("PV Scaling Factor[kWp]", fontsize=12)
+plt.title("Number of Jobs vs. PV Scaling Factor", fontsize=14)
 plt.grid(axis="y", linestyle="--", alpha=0.7)
 
 # Show the plot

@@ -30,6 +30,7 @@ m.to_csv()
 
 base_mastr_path = Path(m.output_dir)
 raw_mastr_file = "mastr_raw_solar.csv"
+# you might need to adjust the data version
 csv_path = base_mastr_path / "data" / "dataversion-2025-02-03" / "bnetza_mastr_solar_raw.csv"
 
 data = pd.read_csv(csv_path)
