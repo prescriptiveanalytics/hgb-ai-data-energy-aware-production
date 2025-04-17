@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
+      # checkout repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Python
+      # set up Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -31,12 +31,16 @@ jobs:
 
       - name: Install the project
         run: uv sync --all-extras --dev
+      
+      - name: Activate virtual environment
+        run: |
+          . .venv/bin/activate
 
-      # Step 4: Build the MkDocs site
+      # build the MkDocs site
       - name: Build the site
         run: mkdocs build
 
-      # Step 5: Deploy to GitHub Pages
+      # deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:

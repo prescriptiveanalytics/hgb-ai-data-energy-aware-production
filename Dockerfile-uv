@@ -20,6 +20,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # ensure Python uses this virtual environment
 ENV VIRTUAL_ENV=/opt/venv \
+    UV_PROJECT_ENVIRONMENT=/opt/venv \
     PATH="$VIRTUAL_ENV/bin:$PATH"
 # create a virtual environment in a persistent location
 RUN uv venv /opt/venv
@@ -27,7 +28,7 @@ RUN uv venv /opt/venv
 # prepare workspace and dependencies
 WORKDIR /workspace
 COPY pyproject.toml *.lock ./
-RUN uv sync --active && uv cache prune --ci
+RUN uv sync && uv cache prune --ci
 
 # ==============================================================================
 # Runtime Stage
@@ -56,5 +57,5 @@ RUN apt-get update && apt-get install -yq \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # install development dependencies
-RUN uv sync --all-extras --active && uv cache prune --ci \
+RUN uv sync --all-extras && uv cache prune --ci \
     && uvx cruft
