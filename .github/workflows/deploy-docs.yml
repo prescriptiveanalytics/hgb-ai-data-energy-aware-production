@@ -38,8 +38,8 @@ jobs:
 
       # Step 5: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.1.0
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages  # The branch to deploy to (it will create this branch if it doesn't exist)
-          folder: site  # MkDocs generates the static site in the 'site' folder by default
+          folder: site  # The folder containing the built MkDocs site
           token: ${{ secrets.DOCS_DEPLOY_TOKEN }}  # GitHub's token for authentication
