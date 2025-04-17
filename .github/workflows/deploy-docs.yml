@@ -35,6 +35,7 @@ jobs:
       - name: Activate virtual environment
         run: |
           . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
 
       # build the MkDocs site
       - name: Build the site
