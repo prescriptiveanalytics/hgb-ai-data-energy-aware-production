@@ -1,6 +1,8 @@
 site_name: hgb-ai-data-energy-aware-production Documentation
 repo_url: https://github.com/prescriptiveanalytics/hgb-ai-data-energy-aware-production
 
+use_directory_urls: false
+
 theme:
   name: material
 
@@ -32,6 +34,7 @@ plugins:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+  - footnotes
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js

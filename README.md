@@ -6,15 +6,6 @@ This README serves as a **TLDR** for detailed documentation look at the docs and
 
 The **Energy Aware Scheduling Problem** involves scheduling multiple jobs across multiple stages in a flowshop environment. Each job has a nominal processing time but can be processed at different speeds, impacting both processing time and energy consumption. The main goal is to optimize scheduling while balancing energy efficiency and makespan. The data package also provides PV data from multiple industrial sites in europe, which can be used to define more interesting scenarios. 
 
-## Getting Started
-Project is split up into multiple sections: 
-
-- **[Usage]()**: How to use the data for your own optimization algorithm.
-- **[Problem Instance Structure]()**: Describes the scheduling problem, its formulation, and the structure of the provided data.
-- **[Data Package Structure]()**: Describes the structure of the data package.
-
-You can download the data from the [releases page](https://github.com/prescriptiveanalytics/hgb-ai-data-energy-aware-production/releases).
-
 ## Main Contributions
 
 - **Advanced Scheduling Benchmark**:

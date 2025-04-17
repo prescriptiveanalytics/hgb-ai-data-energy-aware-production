@@ -1,13 +1,15 @@
 # Home
 
-The **Energy Aware Scheduling Problem** involves scheduling multiple jobs across multiple stages in a flowshop environment. Each job has a nominal processing time but can be processed at different speeds, impacting both processing time and energy consumption. The main goal is to optimize scheduling while balancing energy efficiency and makespan. The data package also provides PV data from multiple industrial sites in europe, which can be used to define more interesting scenarios. 
+The **Energy Aware Scheduling Problem** involves scheduling multiple jobs across multiple stages in a flowshop environment. Each job has a nominal processing time but can be processed at different speeds, impacting both processing time and energy consumption. The main goal is to generate an optimal schedule while balancing energy efficiency and makespan. Additionally, the problem allows to for more objectives like renewable utilization and power shaping. The data package also provides PV data from multiple industrial sites in europe, which can be used to define more interesting scenarios. 
+
+The problem data is based on tested data from academic literature[^1].
 
 ## Getting Started
 Project is split up into multiple sections: 
 
-- **[Usage]()**: How to use the data for your own optimization algorithm.
-- **[Problem Instance Structure]()**: Describes the scheduling problem, its formulation, and the structure of the provided data.
-- **[Data Package Structure]()**: Describes the structure of the data package.
+- **[Usage](usage.md)**: How to use the data for your own optimization algorithm.
+- **[Problem Instance Structure](problem_formulation.md)**: Describes the scheduling problem, its formulation, and the structure of the provided data.
+- **[Data Package Structure](data_package.md)**: Describes the structure of the data package.
 
 You can download the data from the [releases page](https://github.com/prescriptiveanalytics/hgb-ai-data-energy-aware-production/releases).
 
@@ -33,3 +35,6 @@ Real-world solar PV system characteristics (e.g., orientation, tilt, and capacit
 
 - **Reliable Environmental and Economic Inputs**:
 Solar generation potential is based on PVGIS data using typical configurations. Electricity pricing reflects real 2024 market values, sourced from APG, enabling accurate cost modeling.
+
+
+[^1]: Fernandez-Viagas, V., & Framinan, J. M. (2020). Design of a testbed for hybrid flow shop scheduling with identical machines. Computers & Industrial Engineering, 141(106288), 106288. doi:10.1016/j.cie.2020.106288
