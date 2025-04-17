@@ -22,6 +22,7 @@ This data packapge provides scheduling problems which includes the possibilities
 
 ![Best known makespans](figures/makespans.png)
 ![Average makespan by number of stages](figures/avg_makespan_by_num_stages.png)
+![Distribution of Required PV System Size](figures/distribution_of_required_pv_system_sizes.png)
 ![Geogebra Explainer](figures/ggb.png)
 
 ### Files and Folders
